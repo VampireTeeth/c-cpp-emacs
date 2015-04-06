@@ -101,9 +101,6 @@
 ;ace-window config
 (global-set-key (kbd "M-p") 'ace-window)
 
-;misc configs
-(setq make-backup-files nil)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
 ;start auto-complete-clang with emacs
 (add-to-list 'ac-dictionary-directories (concat (getenv "HOME") "/.emacs.d/ac-dict"))
 (require 'auto-complete-clang)
@@ -144,3 +141,7 @@
  /usr/include/x86_64-linux-gnu
  /usr/include
 ")))
+
+;misc configs
+(setq make-backup-files nil)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
