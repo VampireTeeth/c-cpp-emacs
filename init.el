@@ -73,8 +73,8 @@
    '(flymake-google-cpplint-command "/usr/local/bin/cpplint"))
   (flymake-google-cpplint-load))
 
-(add-hook 'c++-mode-hook 'my:flymake-google-init)
-(add-hook 'c-mode-hook 'my:flymake-google-init)
+;;(add-hook 'c++-mode-hook 'my:flymake-google-init)
+;;(add-hook 'c-mode-hook 'my:flymake-google-init)
 
 ;helm-config configuration
 (require 'helm-config)
