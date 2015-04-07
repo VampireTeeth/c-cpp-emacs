@@ -117,15 +117,15 @@
 ;Company setup
 (require 'company)
 (define-key company-mode-map [(tab)] 'company-complete)
-(define-key company-mode-map (kbd "C-x y") 'company-yasnippet)
-;(define-key company-mode-map [(control tab)] 'company-semantic)
+(define-key company-mode-map (kbd "C-x C-y") 'company-yasnippet)
+(define-key company-mode-map [(control tab)] 'company-semantic)
 (add-hook 'after-init-hook 'global-company-mode)
 
 ;function-args setup
 (require 'function-args)
 (fa-config-default)
-(define-key c-mode-map [(control tab)] 'moo-complete)
-(define-key c++-mode-map [(control tab)] 'moo-complete)
+;;(define-key c-mode-map [(control tab)] 'moo-complete)
+;;(define-key c++-mode-map [(control tab)] 'moo-complete)
 (define-key c-mode-map (kbd "M-o") 'fa-show)
 (define-key c++-mode-map (kbd "M-o") 'fa-show)
 
