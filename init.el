@@ -14,10 +14,22 @@
   ;;                 magit magithub markdown-mode paredit projectile python
   ;;                 sass-mode rainbow-mode scss-mode solarized-theme
   ;;                 volatile-highlights yaml-mode yari zenburn-theme)
-  '(auto-complete yasnippet evil auto-complete-c-headers
-		  flymake-google-cpplint helm autopair
-		  highlight-parentheses ace-window auto-complete-clang
-		  paredit iedit zenburn-theme)
+  '(
+    ;auto-complete
+    company
+    helm
+    function-args
+    yasnippet
+    evil
+    ;auto-complete-c-headers
+    ;flymake-google-cpplint
+    autopair
+    highlight-parentheses
+    ace-window
+    ;auto-complete-clang
+    paredit
+    iedit
+    )
   "A list of packages to ensure are installed at launch.")
 
 (defun prelude-packages-installed-p ()
@@ -39,10 +51,10 @@
 (load-theme 'wombat)
 
 ;start auto-complete with emacs
-(require 'auto-complete)
+;(require 'auto-complete)
 ;do default config for auto-complete
-(require 'auto-complete-config)
-(ac-config-default)
+;(require 'auto-complete-config)
+;(ac-config-default)
 
 
 ;start yasnippet with emacs
@@ -54,24 +66,24 @@
 (evil-mode 1)
 
 ;let's define a function which initializes auto-complete-c-headers
-(defun my:ac-c-header-init ()
-  (require 'auto-complete-c-headers)
-  (add-to-list 'ac-sources 'ac-source-c-headers)
-  (add-to-list 'achead:include-directories '"/usr/include/c++/4.8"))
-
-;add hooks for c/c++ mode to use auto-complete-c-headers
-(add-hook 'c++-mode-hook 'my:ac-c-header-init)
-(add-hook 'c-mode-hook 'my:ac-c-header-init)
+;(defun my:ac-c-header-init ()
+;  (require 'auto-complete-c-headers)
+;  (add-to-list 'ac-sources 'ac-source-c-headers)
+;  (add-to-list 'achead:include-directories '"/usr/include/c++/4.8"))
+;
+;;add hooks for c/c++ mode to use auto-complete-c-headers
+;(add-hook 'c++-mode-hook 'my:ac-c-header-init)
+;(add-hook 'c-mode-hook 'my:ac-c-header-init)
 
 ;iedit configuration
 (define-key global-map (kbd "C-c ;") 'iedit-mode)
 
 ;start flymake-google-cpplint-load
-(defun my:flymake-google-init ()
-  (require 'flymake-google-cpplint)
-  (custom-set-variables
-   '(flymake-google-cpplint-command "/usr/local/bin/cpplint"))
-  (flymake-google-cpplint-load))
+;(defun my:flymake-google-init ()
+;  (require 'flymake-google-cpplint)
+;  (custom-set-variables
+;   '(flymake-google-cpplint-command "/usr/local/bin/cpplint"))
+;  (flymake-google-cpplint-load))
 
 ;;(add-hook 'c++-mode-hook 'my:flymake-google-init)
 ;;(add-hook 'c-mode-hook 'my:flymake-google-init)
@@ -91,56 +103,76 @@
 
 
 ;Turn on Semantics (CEDET)
+;Semantic setup
+(require 'cc-mode)
+(require 'semantic)
+(global-semanticdb-minor-mode 1)
+(global-semantic-idle-scheduler-mode 1)
 (semantic-mode 1)
 ;Let's define a function which adds semantic as a suggestion backend to auto complete
-(defun my:add-semantic-to-autocomplete ()
-  (add-to-list 'ac-sources 'ac-source-semantic))
-(add-hook 'c-mode-common-hook 'my:add-semantic-to-autocomplete)
+;(defun my:add-semantic-to-autocomplete ()
+;  (add-to-list 'ac-sources 'ac-source-semantic))
+;(add-hook 'c-mode-common-hook 'my:add-semantic-to-autocomplete)
 
+;Company setup
+(require 'company)
+(define-key company-mode-map [(tab)] 'company-complete)
+(define-key company-mode-map (kbd "C-x y") 'company-yasnippet)
+;(define-key company-mode-map [(control tab)] 'company-semantic)
+(add-hook 'after-init-hook 'global-company-mode)
+
+;function-args setup
+(require 'function-args)
+(fa-config-default)
+(define-key c-mode-map [(control tab)] 'moo-complete)
+(define-key c++-mode-map [(control tab)] 'moo-complete)
+(define-key c-mode-map (kbd "M-o") 'fa-show)
+(define-key c++-mode-map (kbd "M-o") 'fa-show)
 
 ;ace-window config
-(global-set-key (kbd "M-p") 'ace-window)
+;(global-set-key (kbd "M-p") 'ace-window)
+(global-set-key (kbd "C-x C-x") 'ace-window)
 
 ;start auto-complete-clang with emacs
-(add-to-list 'ac-dictionary-directories (concat (getenv "HOME") "/.emacs.d/ac-dict"))
-(require 'auto-complete-clang)
-(setq ac-auto-start nil)
-(setq ac-quick-help-delay 0.5)
+;(add-to-list 'ac-dictionary-directories (concat (getenv "HOME") "/.emacs.d/ac-dict"))
+;(require 'auto-complete-clang)
+;(setq ac-auto-start nil)
+;(setq ac-quick-help-delay 0.5)
 ;; (ac-set-trigger-key "TAB")
 ;; (define-key ac-mode-map  [(control tab)] 'auto-complete)
-(define-key ac-mode-map  [(control tab)] 'auto-complete)
-(defun my:ac-config ()
-  (add-to-list 'ac-sources 'ac-source-abbrev)
-  (add-to-list 'ac-sources 'ac-source-dictionary)
-  (add-to-list 'ac-sources 'ac-source-words-in-same-mode-buffers)
-  (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
-  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
-  (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
-  (add-hook 'css-mode-hook 'ac-css-mode-setup)
-  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
-  (global-auto-complete-mode t))
-
-(defun my:ac-cc-mode-setup ()
-  (add-to-list 'ac-sources 'ac-source-clang)
-  (add-to-list 'ac-sources 'ac-source-yasnippet))
-
-(add-hook 'c-mode-common-hook 'my:ac-cc-mode-setup)
-;; ac-source-gtags
-(my:ac-config)
-
-(setq ac-clang-flags
-      (mapcar (lambda (item) (concat "-I" item))
-	      (split-string
-	       "
- /usr/include/c++/4.8
- /usr/include/x86_64-linux-gnu/c++/4.8
- /usr/include/c++/4.8/backward
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include
- /usr/local/include
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed
- /usr/include/x86_64-linux-gnu
- /usr/include
-")))
+;(define-key ac-mode-map  [(control tab)] 'auto-complete)
+;(defun my:ac-config ()
+;  (add-to-list 'ac-sources 'ac-source-abbrev)
+;  (add-to-list 'ac-sources 'ac-source-dictionary)
+;  (add-to-list 'ac-sources 'ac-source-words-in-same-mode-buffers)
+;  (add-hook 'emacs-lisp-mode-hook 'ac-emacs-lisp-mode-setup)
+;  ;; (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+;  (add-hook 'ruby-mode-hook 'ac-ruby-mode-setup)
+;  (add-hook 'css-mode-hook 'ac-css-mode-setup)
+;  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+;  (global-auto-complete-mode t))
+;
+;(defun my:ac-cc-mode-setup ()
+;  (add-to-list 'ac-sources 'ac-source-clang)
+;  (add-to-list 'ac-sources 'ac-source-yasnippet))
+;
+;(add-hook 'c-mode-common-hook 'my:ac-cc-mode-setup)
+;;; ac-source-gtags
+;(my:ac-config)
+;
+;(setq ac-clang-flags
+;      (mapcar (lambda (item) (concat "-I" item))
+;	      (split-string
+;	       "
+; /usr/include/c++/4.8
+; /usr/include/x86_64-linux-gnu/c++/4.8
+; /usr/include/c++/4.8/backward
+; /usr/lib/gcc/x86_64-linux-gnu/4.8/include
+; /usr/local/include
+; /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed
+; /usr/include/x86_64-linux-gnu
+; /usr/include
+;")))
 
 ;misc configs
 (setq make-backup-files nil)
